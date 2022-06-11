@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\app",
+    "\\app\\services",
+    "\\config",
+    "\\showAds",
+    "\\src\\app\\pipes",
+    "\\src\\app\\service"
+  ],
+  "SelectedNode": "\\config\\config.database.js",
+  "PreviewInSolutionExplorer": false
+}
