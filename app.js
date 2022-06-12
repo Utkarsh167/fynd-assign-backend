@@ -12,7 +12,7 @@ const CommonService = require('./common/commonService')
 //   console.log('http server running at ' + port)
 // })
 
-const httpserver = app.listen(httpport, () => {
+const httpserver = app.listen(port, () => {
   console.log('http server running at ' + port)
 })
 // Check if any user exist, if not then add admin
