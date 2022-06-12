@@ -75,6 +75,7 @@ function signIn(req, res) {
 
 router.post("/signin", signIn)
 router.post('/logout', verifyToken.verifyToken, user_controller.logout);
+router.post('/list', verifyToken.verifyToken, user_controller.listMovies);
 
 
 module.exports = router;

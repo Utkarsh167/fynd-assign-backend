@@ -34,4 +34,8 @@ var movie = new Schema(
 )
 
 /// Export the models
+movie.index({director: 1,'99popularity': -1,name: -1}, {unique: true});
+movie.index({name: "text",director: "text"});
+
 module.exports = mongoose.model('Movie', movie);
+mongoose.model('Movie', movie).createIndexes();

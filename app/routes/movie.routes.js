@@ -16,7 +16,9 @@ router.use(expressValidator());
 router.post('/create', verifyToken.verifyToken, movie_controller.addMovie);
 router.put('/:id', verifyToken.verifyToken, movie_controller.updateMovie);
 router.delete('/:id', verifyToken.verifyToken, movie_controller.removeMovie);
-router.post('/list', verifyToken.verifyToken, movie_controller.listMovies);
+router.post('/list', movie_controller.listMovies);
+router.get('/genres', movie_controller.getGenres);
+router.get('/:id', movie_controller.getMovieDetails);
 
 
 module.exports = router;

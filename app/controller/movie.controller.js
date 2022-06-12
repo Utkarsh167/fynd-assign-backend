@@ -21,3 +21,13 @@ exports.listMovies = function(req, res, next){
     movieService.listMovies(req, res, next);
 }
 
+exports.getGenres = function(req, res, next){
+    let movieService = new MovieService();
+    movieService.getGenres(req, res, next);
+}
+exports.getMovieDetails = function(req, res, next){
+    let movieService = new MovieService();
+    movieService.getMovieDetails(req, res, next);
+}
+
+
