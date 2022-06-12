@@ -8,9 +8,17 @@ var express = require('express')
 const CommonService = require('./common/commonService')
 
 // for http uncomment this code and comment above server
-const httpserver = http.createServer(app).listen(httpport, () => {
-  console.log('http server running at ' + httpport)
-})
+// const httpserver = http.createServer(app).listen(httpport, () => {
+//   console.log('http server running at ' + httpport)
+// })
+
+var httpsOptions = {
+ 
+}   
+var server = https.createServer(httpsOptions, app).listen(443, function () {
+  console.log("Express server listening on port " + 443);
+});
+
 
 // http.createServer(function (req, res) {
 //   res.writeHead(301, {
