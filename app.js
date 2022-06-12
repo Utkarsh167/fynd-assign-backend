@@ -2,7 +2,7 @@ var app = require('./index')
 var debug = require('debug')('Baker:server')
 const http = require('http')
 // var port = normalizePort(process.env.PORT || '443') 
-var port = process.env.HTTPPORT || '80'
+var port = process.env.HTTPPORT || '3000'
 
 var express = require('express')
 const CommonService = require('./common/commonService')
