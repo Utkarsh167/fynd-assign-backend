@@ -6,6 +6,7 @@ var jwt = require('jsonwebtoken')
 const { user } = require('../controller/user.controller');
 const { resolveSoa } = require('dns');
 const Genre = require('../model/genre.model');
+const CommonService = require('../../common/commonService')
 
 class MovieService {
 
@@ -17,7 +18,7 @@ class MovieService {
       movie.director = req.body.director;
       movie.imdb_score = req.body.imdb_score;
       movie.genre = req.body.genre;
-      if (req.body.isOther && req.body.other && req.body.other!='') {
+      if (req.body.isOther && req.body.other && req.body.other != '') {
         let genre = new Genre()
         genre.name = req.body.other;
         genre.type = 'custom';
@@ -25,8 +26,12 @@ class MovieService {
         let genreCreated = await Genre.create(genre);
       }
       let movieCreated = await Movie.create(movie);
-      if (movieCreated) res.send(true)
-      else res.send(false)
+      if (movieCreated) {
+        var commonService = new CommonService()
+        await commonService.addActivityLogData('movieAdded',movieCreated._id,'create',req.headers.userId,'New movie added');
+        res.send(true)
+      }
+      else { res.send(false) }
     } catch (error) {
       return next(error);
     }
@@ -37,6 +42,8 @@ class MovieService {
       if (error) {
         return next(error);
       } else {
+        var commonService = new CommonService()
+        await commonService.addActivityLogData('movieRemoved',data._id,'delete',req.headers.userId,'Movie deleted');
         res.status(200).json({
           msg: data,
           status: 'success'
@@ -68,13 +75,15 @@ class MovieService {
         }
       })
     if (updateMovie) {
-      if (req.body.isOther && req.body.other && req.body.other!='') {
+      if (req.body.isOther && req.body.other && req.body.other != '') {
         let genre = new Genre()
         genre.name = req.body.other;
         genre.type = 'custom';
         genre.addedBy = req.headers.userId;
         let genreCreated = await Genre.create(genre);
       }
+      var commonService = new CommonService()
+      await commonService.addActivityLogData('movieUpdated',updateMovie._id,'update',req.headers.userId,'Movie updated');
       res.status(200).json({
         // msg: data,
         status: 'success'
@@ -91,7 +100,8 @@ class MovieService {
     const limit = parseInt(req.body.limit);
     const pageNo = parseInt(req.body.page);
     const genre = req.body.genre;
-   
+    const sort = req.body.sort;
+
 
     try {
       const searchQuery = req.body.search;
@@ -102,7 +112,7 @@ class MovieService {
         match2["$text"] = { $search: searchQuery }
         aggPipe.push({ "$match": match2 });
       }
-      
+
       let match1 = {};
       if (genre && genre.length > 0) {
         match1["$and"] = [
@@ -112,16 +122,28 @@ class MovieService {
         aggPipe.push({ "$match": match1 });
       }
 
-     
+      let sortOrder = {}
+      if (sort && sort.sortBy && sort.sortOrder) {
+        if (sort.sortBy === "name") {
+          sortOrder = { "name": sort.sortOrder };
+        } else if (sort.sortBy === "director") {
+          sortOrder = { "director": sort.sortOrder };
+        } else if (sort.sortBy === "99popularity") {
+          sortOrder = { "99popularity": sort.sortOrder };
+        }
+        aggPipe.push({ "$sort": sortOrder });
+      }
 
-      let sort = { director: 1, '99popularity': -1, name: 1 };
-      aggPipe.push({ "$sort": sort });
+      // if(sort){
+      // let sortBy = { sort.value.sort: sort.value.order };
+      // aggPipe.push({ "$sort": sortBy });
+      // }
 
       if (pageNo && limit) {
         let skip = (pageNo - 1) * limit;
         // aggPipe.push({ "$skip": skip });
         // aggPipe.push({ "$limit": limit });
-        let facet =  {
+        let facet = {
           "totalData": [
             // { "$match": { }},
             { "$skip": skip },
@@ -130,11 +152,11 @@ class MovieService {
           "totalCount": [
             { "$count": "count" }
           ]
-         
+
         }
-        aggPipe.push({"$facet":facet});
+        aggPipe.push({ "$facet": facet });
       }
-    
+
       const result = await Movie.aggregate(aggPipe);
       res.status(200).json({
         msg: result,
@@ -157,7 +179,7 @@ class MovieService {
   }
 
   async getGenres(req, res, next) {
-    Genre.find({ }, async (error, data) => {
+    Genre.find({}, async (error, data) => {
       if (error) {
         return next(error);
       } else {

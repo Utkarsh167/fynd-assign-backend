@@ -5,7 +5,9 @@
 const ActivityLog = require('../app/model/activity-log.model')
 const User = require('../app/model/user.model')
 const Genre = require('../app/model/genre.model');
+const Movie = require('../app/model/movie.model');
 const { genreArray } = require('./constant');
+const { movieArray } = require('./constant');
 // const genreArray = require('./constant').genreArray;
 // var vendorService = new VendorService()
 // var publisherService = new PublisherService()
@@ -44,7 +46,7 @@ class CommonService {
 
           await Promise.all(genreArray.map(async (element) => {
             let genre = new Genre()
-            genre.name = element;
+            genre.name = element.trim();
             genre.type = 'present';
             genre.addedBy = userCreated._id;
 
@@ -71,6 +73,31 @@ class CommonService {
         return false;
       }
     }
+  }
+
+
+  async checkAndAddMovies() {
+    var movieExists = await Movie.findOne({
+    })
+
+    // let genreArray = genreArray;
+    if (!movieExists) {
+      let allPromises = await Promise.all(movieArray.map(async (element) => {
+        let movie = new Movie()
+        movie.name = element.name.trim();
+        movie.director = element.director.trim();
+        movie['99popularity'] = element['99popularity'];
+        movie.imdb_score = element.imdb_score;
+        movie.genre = element.genre.map(s => s.trim());
+        let movieCreated = await Movie.create(movie);
+      }));
+      if (allPromises) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    else return false;
   }
 
   async addActivityLogData(activity, movieId, type, from, description) {

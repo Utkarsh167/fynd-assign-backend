@@ -73,8 +73,11 @@ function signIn(req, res) {
   })(req, res)
 }
 
+// admin signin
 router.post("/signin", signIn)
+// admin logout
 router.post('/logout', verifyToken.verifyToken, user_controller.logout);
+// list movie with filters
 router.post('/list', verifyToken.verifyToken, user_controller.listMovies);
 
 

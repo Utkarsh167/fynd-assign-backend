@@ -8,6 +8,7 @@ mongoose.connect(url, {
 })
     .then(() => {
         console.log('successfully connected to database')
+        // debug mode to check queries
        mongoose.set("debug", true);
     })
     .catch(err => {

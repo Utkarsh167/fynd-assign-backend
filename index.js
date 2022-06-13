@@ -16,6 +16,7 @@ const compression = require('compression')
 app.use(compression())
 const createError = require('http-errors');
 
+//initialing database
 database.mongoose
 
 
@@ -32,14 +33,13 @@ app.use(cookieParser())
 
 app.use(passport.initialize())
 app.use(express.static(path.join(__dirname, 'dist')));
-// app.use('/', express.static(path.join(__dirname, 'dist')))
 app.get('/robots.txt', function (req, res) {
     res.type('text/plain');
     res.send("User-agent: *\nDisallow: /");
 });
 
 
-
+// routes to handle requests
 app.use('/user', user);
 app.use('/movie', movie);
 

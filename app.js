@@ -16,6 +16,8 @@ app.listen(port, err => {
   if(err) throw err;
   console.log("%c Server running", "color: green");
 });
-// Check if any user exist, if not then add admin
+// Check if any user exist, if not then add admin and also genres
 var commonService = new CommonService()
 commonService.checkAndAddAdmin();
+// Check if any movie exist, if not then add sample movie data
+commonService.checkAndAddMovies();

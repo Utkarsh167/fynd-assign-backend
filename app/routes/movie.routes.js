@@ -12,12 +12,17 @@ var User = require('../model/user.model')
 
 router.use(expressValidator());
 
-
+// add new movie
 router.post('/create', verifyToken.verifyToken, movie_controller.addMovie);
+// update movie
 router.put('/:id', verifyToken.verifyToken, movie_controller.updateMovie);
+// remove movie
 router.delete('/:id', verifyToken.verifyToken, movie_controller.removeMovie);
+// list movie with filter
 router.post('/list', movie_controller.listMovies);
+// get genres
 router.get('/genres', movie_controller.getGenres);
+// get movie details by id
 router.get('/:id', movie_controller.getMovieDetails);
 
 
